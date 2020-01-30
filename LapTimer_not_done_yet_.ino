@@ -71,6 +71,7 @@ void setup(){
 
 void loop(){
 
+   //Uncomment this code if using DHT compensator
   /*delay(2000);                     // Delay so DHT-22 sensor can stabalize
     hum = dht.readHumidity();     // Get Humidity value
     temp= dht.readTemperature();  // Get Temperature value
@@ -80,8 +81,9 @@ void loop(){
     distance = (duration / 2) * soundcm;                  // Calculate the distance
   */
 
+   //use this if not use DHT compensator
    duration = sonar.ping_median(iterations); 
-   distance = (duration / 2) * 0.00343;   //use this if not use dht compensator
+   distance = (duration / 2) * 0.00343;      
   
  if ((distance <=150 && distance >= 2 && FLtrigger == false) || digitalRead(A0)==0) { //if ultrasonic trigger object or start/stop button pressed then STOPWATCH START!!
    if ((millis() - lastButton) > delayAntiBouncing){
@@ -96,7 +98,7 @@ void loop(){
         }
        else if (i==1){
           lcd.setCursor(0, 0);
-          lcd.print("Stop Timer  ");
+          lcd.print("Stop Timer ");
           dataPause = dataStopWatch;
           fPause = 1;
           //give data message to another MCU with NRF24 for stop stopwatch
@@ -115,7 +117,8 @@ void loop(){
       lcd.clear();
       lcd.print("Reset Stopwatch");
       lcd.setCursor(0, 1); 
-      lcd.print("0:0:0.0");  
+      lcd.print("0:0:0.0");
+      //give data message to another MCU to restart stopwatch  
       delay(2000);
       lcd.clear();
       lcd.print("  Press Button");
