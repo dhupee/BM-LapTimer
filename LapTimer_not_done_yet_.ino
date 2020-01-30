@@ -83,7 +83,7 @@ void loop(){
 
    //use this if not use DHT compensator
    duration = sonar.ping_median(iterations); 
-   distance = (duration / 2) * 0.00343;      
+   distance = (duration / 2) * 0.0343;      
   
  if ((distance <=150 && distance >= 2 && FLtrigger == false) || digitalRead(A0)==0) { //if ultrasonic trigger object or start/stop button pressed then STOPWATCH START!!
    if ((millis() - lastButton) > delayAntiBouncing){
