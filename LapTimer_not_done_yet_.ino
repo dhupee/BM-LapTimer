@@ -28,7 +28,7 @@ bool  sector1   = false;
 
 //float hum;    // Stores humidity value in percent
 //float temp;   // Stores temperature value in Celcius
-//float duration; // Stores HC-SR04 pulse duration value
+float duration; // Stores HC-SR04 pulse duration value
 float distance; // Stores calculated distance in cm
 //float soundsp;  // Stores calculated speed of sound in M/S
 //float soundcm;  // Stores calculated speed of sound in cm/ms
@@ -43,6 +43,8 @@ long delayAntiBouncing = 50;
 long dataPause = 0;
 
 void setup(){
+  Serial.begin (9600);
+  //dht.begin();        //you can ignore this if not using DHT
   pinMode(A0,INPUT);
   pinMode(A1,INPUT);
   digitalWrite(A0,1);
