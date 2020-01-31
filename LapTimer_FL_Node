@@ -49,6 +49,8 @@ const static uint8_t PIN_RADIO_CSN = 10;        //CSN connected to pin 9 arduino
 */
 
 NRFLite _radio;
+
+uint32_t _Reset;
 uint32_t _FLtrigger;
 uint32_t _Sector1;
 //uint32_t _Sector2;
@@ -131,6 +133,7 @@ void loop(){
          
  while (_radio.hasData()){
      _radio.readData(&_Sector1);
+     _radio.readData(&_Reset);
    if ((distance <=150 && distance >= 2 && FLtrigger == false) || digitalRead(A0)==0) { //if ultrasonic trigger object or start/stop button pressed then STOPWATCH START!!
      if ((millis() - lastButton) > delayAntiBouncing){
         if (i==0){
@@ -141,7 +144,7 @@ void loop(){
             fPause = 0;
             FLtrigger = true;
             _FLtrigger = 1;
-            _radio.send(1, &_FLtrigger, sizeof(_FLtrigger)); 
+            _radio.send(11111, &_FLtrigger, sizeof(_FLtrigger)); 
             //give data message to another MCU with NRF24 for start stopwatch
           }
          else if (i==1 || _Sector1 == 1){
@@ -160,12 +163,15 @@ void loop(){
         dataStopWatch = 0;
         dataPause = 0;
         FLtrigger = false; 
+       _Reset = 1;
+       _radio.send(11111, &_Reset, sizeof(_Reset)); 
         lcd.clear();
         lcd.print("Reset Stopwatch");
         lcd.setCursor(0, 1); 
         lcd.print("0:0:0.0");
         //give data message to another MCU to restart stopwatch  
         delay(2000);
+        _Reset = 0;
         lcd.clear();
         lcd.print("  Press Button");
         lcd.setCursor(0, 1); 
