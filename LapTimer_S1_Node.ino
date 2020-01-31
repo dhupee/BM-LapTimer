@@ -38,7 +38,7 @@ LiquidCrystal_I2C lcd(0x3F ,2,1,0,4,5,6,7,3, POSITIVE); //check your i2c lcd add
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); 
 
 const static uint8_t RADIO_ID = 11111;              //ID of the Radio
-const static uint8_t SECTOR1_RADIO_ID = 00000;      //ID of the Sector1 Radio
+const static uint8_t Sector1_RADIO_ID = 00000;      //ID of the FL Radio
 //const static uint8_t SECTOR2_RADIO_ID = ??;      //ID of the Sector2 Radio (if you use it)
 //const static uint8_t SECTOR3_RADIO_ID = ??;      //ID of the Sector3 Radio (if you use it)
 //const static uint8_t SECTOR4_RADIO_ID = ??;      //ID of the Sector4 Radio (if you use it)
@@ -51,6 +51,8 @@ const static uint8_t PIN_RADIO_CSN = 10;        //CSN connected to pin 9 arduino
 */
 
 NRFLite _radio;
+
+uint32_t _Reset;
 uint32_t _FLtrigger;
 uint32_t _Sector1;
 //uint32_t _Sector2;
@@ -59,7 +61,7 @@ uint32_t _Sector1;
 
 
 bool  FLtrigger = false;   //FL = Finish Line
-bool  sector1   = false;
+bool  Sector1   = false;
 //bool  sector2   = false; //just use if you need multisector laptimer
 //bool  sector3   = false; //just use if you need multisector laptimer
 //bool  sector4   = false; //just use if you need multisector laptimer 
@@ -131,6 +133,7 @@ void loop(){
    distance = (duration / 2) * 0.0343;      
 while (_radio.hasData()){
      _radio.readData(&_FLtrigger);
+     _radio.readData(&_Reset);
  if ( _FLtrigger == 1|| digitalRead(A0)==0) { //if ultrasonic trigger object or start/stop button pressed then STOPWATCH START!!
    if ((millis() - lastButton) > delayAntiBouncing){
       if (i==0){
@@ -139,16 +142,16 @@ while (_radio.hasData()){
           lcd.print("Start Timer");
           start = millis();
           fPause = 0;
-          FLtrigger = true;
           //give data message to another MCU with NRF24 for start stopwatch
         }
-       else if (i==1 || distance <=150 && distance >= 2 && FLtrigger == true){
+       else if (i==1 || distance <=150 && distance >= 2 && Sector1 == false){
           lcd.setCursor(0, 0);
           lcd.print("Stop Timer ");
           dataPause = dataStopWatch;
           fPause = 1;
           _Sector1 = 1;
-          _radio.send(1, &_Sector1, sizeof(_Sector1)); 
+          Sector1 = true;
+          _radio.send(00000, &_Sector1, sizeof(_Sector1)); 
           //give data message to another MCU with NRF24 for stop stopwatch
         }
        i =!i;
@@ -159,7 +162,9 @@ while (_radio.hasData()){
    else if (digitalRead(A1)==0 && fPause == 1){
       dataStopWatch = 0;
       dataPause = 0;
-      FLtrigger = false; 
+      Sector1 = false;
+      _Reset = 1;
+      _radio.send(00000, &_Reset, sizeof(_Reset));  
       lcd.clear();
       lcd.print("Reset Stopwatch");
       lcd.setCursor(0, 1); 
@@ -167,6 +172,7 @@ while (_radio.hasData()){
       //give data message to another MCU to restart stopwatch  
       delay(2000);
       lcd.clear();
+      _Reset = 0;
       lcd.print("  Press Button");
       lcd.setCursor(0, 1); 
       lcd.print("  Start / Stop");
