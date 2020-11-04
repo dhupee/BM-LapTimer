@@ -1,3 +1,20 @@
+/*  THIS CODE IS FOR FSAE ULtrasonic LapTimer
+ *  
+ *        created by dhupee_haj 
+ *        
+ *  This Code is originally intented for helping my time calculate time on FSAE car testing
+ *  but I decided that maybe its a good idea to share this knowledge to everybody.
+ * 
+ *  This project use HC-SR04 Ultrasonic Sensor for detecting car
+ *  
+ *  This project is not limited to FSAE car, you can use this for another froject that need lap timing
+ *  also its not limited to this spesific application
+ *  
+*/
+
+
+
+
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <NewPing.h>
